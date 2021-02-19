@@ -1,0 +1,261 @@
+---
+title: "Serie"
+output: html_notebook
+---
+
+
+## Known series and their graphs and sums
+
+
+
+
+
+
+
+```{r}
+
+(function(){
+  
+  genPowerSerieFun <- function(coeffsFun, from = 0, to = 10) {
+    function(x) {
+      s <- 0
+      for (i in from:to) {
+        s <- s + coeffsFun(i) * x^i
+      }
+      s
+    }
+  }
+  
+  linFunCoeffs <- function(n) n
+  
+  
+  
+  
+  
+})()
+
+```
+
+
+  
+
+
+## Multiplication and addition
+
+Weźmy dla przykładu następujące dwie serie:
+$$
+y(x) = a_0 + a_1 x + a_2 x^2 + \dots + a_m x^m + \dots
+$$
+
+$$
+z(x) = b_0 + b_1 x + b_2 x^2 + \dots + b_m x^m + \dots
+$$
+
+Dodawanie i odejmowanie jest trywialne, polega na dodawaniu i odejmowaniu
+wektorów współczynników. Podobnie z mnożeniem i dzieleniem przez stałą.
+
+Iloczyn tych serii jest natomiast nieco bardziej złożony:
+$$
+\begin{cases}
+u(x) = y(x) z(x) &= c_0 + c_1 x + c_2 x^2 + \dots + c_m x^m + \dots ,\\
+c_k &= a_0 b_k + a_1 b_{k-1} + a_2 b_{k-2} + \dots + a_k b_0 \\
+&= \sum_{i=0}^k a_i b_{k-i}\\
+&= \operatorname{to}_k(a) \cdot \operatorname{rev}(\operatorname{to}_k(b))
+\end{cases}
+$$
+dzieje się tak, ponieważ grupujemy współczynniki po tych samych potęgach x.
+($\operatorname{to}_k(a)$ bierze pierwszych k elementów wektora a,
+rev(b) odwraca kolejność elementów wektora b.)
+
+
+
+
+
+
+
+
+
+
+Szczególnym przypadkiem jest mnożenie takich samych serii, 
+np. dla y(x) i nazywając ich współczynniki następująco:
+
+$$
+\begin{cases}
+y(x) &= a_{0,1} + a_{1,1} x + \dots + a_{m,1} + \dots \\
+y^2(x) &= a_{0,2} + a_{1,2} x + \dots + a_{m,2} + \dots \\
+y^3(x) &= a_{0,3} + a_{1,3} x + \dots + a_{m,3} + \dots \\
+\dots \\
+y^n(x) &= a_{0,n} + a_{1,n} x + \dots + a_{m,n} + \dots 
+\end{cases}
+$$
+
+Współczynniki będą miały wtedy zależności:
+
+$$ 
+\begin{cases}
+a_{k,2} &= \operatorname{to}_k(a_{.,1}) \cdot \operatorname{rev}(\operatorname{to}_k(a_{.,1}))\\
+a_{k,3} &= \operatorname{to}_k(a_{.,1}) \cdot \operatorname{rev}(\operatorname{to}_k(a_{.,2}))\\
+\dots \\
+a_{k,n} &= \operatorname{to}_k(a_{.,1}) \cdot \operatorname{rev}(\operatorname{to}_k(a_{.,n-1}))
+\end{cases}
+$$
+
+
+## Division
+
+
+
+
+## Composition
+
+
+
+## Inversion
+
+
+[Lagrange inversion theorem](https://en.wikipedia.org/wiki/Lagrange_inversion_theorem)
+is Taylor series expansion of the inverse function of an analytic function.
+
+
+
+
+
+## Integration
+
+
+Integral process:
+
+$$
+\int_{0}^{x} \sin(x) \, dx = \frac{x}{n}
+\left(
+\sin\left(\frac{x}{n}\right) + 
+\sin\left(\frac{2x}{n}\right) + 
+\dots + 
+\sin\left(\frac{nx}{n}\right)
+\right)
+$$
+
+
+
+```{r}
+
+(function(){
+  
+  sumOfWeightedSines <- function(N) {
+    force(N)
+    function(x) 1/N*x*Reduce(function(acc, n) acc + sin(n*x/N), 1:N, x*0)
+  }
+  
+  
+  int3Sin <- function(x) {
+    1/3*x*(sin(1/3*x) + sin(2/3*x) + sin(3/3*x))
+  }
+  
+
+  defIntSin <- function(x) sapply(x, function(x) integrate(sin, 0, x)$value)
+  
+  x <- seq(from = 0, to = 2*pi, length.out = 100)
+  
+  
+  plot(c(0,2*pi), c(-1,2), type = "n", ann = FALSE)
+  lines(x, sin(x), col = "black", lwd = 2)
+  lines(x, defIntSin(x), col = "dark blue", lwd = 2, lty = 2)
+  lines(x, sumOfWeightedSines(2)(x), col = "red")
+  lines(x, sumOfWeightedSines(5)(x), col = "green")
+  lines(x, sumOfWeightedSines(30)(x), col = "blue", lwd = 2)
+  title(main = "Integration as infinite sum of squished functions",
+        xlab = "x",
+        ylab = "y")
+  grid()
+  legend("topright", 
+         c("sin(x)", "∫ sin(x)", "sin2(x)", "sin5(x)", "sin30(x)"),
+         lty = c(1,2,1,1,1),
+         lwd = c(2,2,1,1,2),
+         col = c("black", "black", "red", "green", "blue"))
+  
+})()
+
+
+```
+
+
+
+```{r}
+
+(function(){
+  
+  sumOfWeightedSquares <- function(N) {
+    force(N)
+    function(x) 1/N*x*Reduce(function(acc, n) acc + (n*x/N)^2, 1:N, x*0)
+  }
+  
+  
+
+  defIntSquare <- function(x) {
+    square <- function(x) x^2
+    sqareInt <- function(x) integrate(square, 0, x, subdivisions = 1000L)$value
+    sapply(x, sqareInt)
+  }
+  
+  # x <- seq(from = 0, to = 2*pi, length.out = 100)
+  x <- seq(from = 0, to = 1, length.out = 100)
+  # xDense <- seq(from = 0, to = 100, length.out = 1000)
+  
+  square    <- x^2
+  squareInt <- defIntSquare(x)
+  square2   <- sumOfWeightedSquares(2)(x)
+  square5   <- sumOfWeightedSquares(5)(x)
+  square30  <- sumOfWeightedSquares(30)(x)
+  
+  
+  
+  plot(range(x), range(square, squareInt, square2, square5, square30), 
+       type = "n", ann = FALSE)
+  lines(x, square, col = "black", lwd = 2)
+  lines(x, squareInt, col = "dark blue", lwd = 2, lty = 2)
+  lines(x, square2, col = "red")
+  lines(x, square5, col = "green")
+  lines(x, square30, col = "blue", lwd = 2)
+  title(main = "Integration as infinite sum of squished functions",
+        xlab = "x",
+        ylab = "y")
+  grid()
+  legend("topleft", 
+         c("x^2", "∫ x^2", "x^2_2", "x^2_5", "x^2_30"),
+         lty = c(1,2,1,1,1),
+         lwd = c(2,2,1,1,2),
+         col = c("black", "black", "red", "green", "blue"))
+  
+})()
+
+
+```
+
+
+
+## Integral of derivative
+
+
+## Integral by d-function
+
+
+## Derivative
+
+
+## Differential
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

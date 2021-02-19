@@ -1,0 +1,704 @@
+---
+title: "Matma"
+output: html_notebook
+---
+
+<style>
+body {
+  text-align: justify
+}
+</style>
+
+
+
+
+## Analiza Fourier'a
+
+### Wstęp
+
+Analiza Fourier'a zajmuje się reprezentacją funkcji (kształtu),
+względem innego odniesienia niż położenie w punkcie.
+
+W normalnym układzie odniesienia zazwyczaj traktujemy wartość
+funkcji w punkcie jako po prostu wysokość kształtu dla danej szerokości.
+
+W Fourier'owskim układzie odniesienia wartość (transformowanej) funkcji 
+w punkcie możemy traktować jako amplitudę funkcji sinusoidalnej o danej
+częstotliwości dla danej częstotliwości.
+
+
+Wynika z tego, że cały kształt funkcji możemy opisać:
+
+* jako sumę wysokości w odniesieniu do szerokości (to jest odniesienie "normalne") lub 
+* jako sumę "wysokości periodycznych" w odniesieniu do "szerokości częstotliwości" (to jest odniesienie "Fourier'a").
+
+
+Taka konstrukcja myślowa jest dosyć ogólna. Pomysł na nią można odnieść do wektorów i ich baz.
+Wiadomo że wektor można przedstawić za pomocą różnych wektorów odniesienia (wektorów bazowych).
+
+
+Wyobraźmy sobie, że mamy pewne dwa odniesienia: 
+
+* $|1\rangle$ i $|2\rangle$ (baza normalna), oraz inne dwa odniesienia
+* $|a\rangle$ i $|b\rangle$ (baza nienormalna), oraz, że 
+* znamy przejścia pomiędzy każdym z odniesień,
+
+to wtedy możemy jakąś wartość z odniesienia normalnego przedstawić
+w odniesieniu nienormalnym.
+
+
+Na przykład te wartości będzą równe: 
+
+```{r BaseAndBaseInverse, eval=FALSE, include=FALSE}
+
+A <- matrix(data = c(1,2, 2,-1), nrow = 2, ncol = 2)
+Ainv <- solve(A)
+list( A = A,
+"Ainv/det(Ainv)" = Ainv / det(Ainv),
+"det(Ainv)" = det(Ainv)
+)
+```
+
+
+$$ 
+|1\rangle + |2\rangle 
+= -\frac{1}{5} (-3|a\rangle - |b\rangle)
+$$
+pod warunkiem że bazę nienormalną można odnieść do normalnej następująco:
+$$ 
+|a\rangle 
+=  |1\rangle + 2|2\rangle
+$$
+$$ 
+|b\rangle 
+=  2|1\rangle - |2\rangle
+$$
+i na odwrót:
+$$ 
+|1\rangle 
+= -\frac{1}{5} (-|a\rangle - 2|b\rangle)
+= -\frac{1}{5} (-|1\rangle - 2|2\rangle - 4|1\rangle + 2|2\rangle) = -\frac{1}{5} (-5|1\rangle)
+$$
+$$ 
+|2\rangle 
+= -\frac{1}{5} (-2|a\rangle + |b\rangle)
+$$
+
+
+Teraz przyjmując, że mamy nieskończenie wiele odniesień normalnych, 
+dowolną funkcję możemy przedstawić jako nieskończony wektor
+(nieskończenie wiele odniesień z różnymi amplitudami), i to jest
+normalne przedstawienie funkcji f(x) - każda wartość x to jedno z odniesień normalnych, 
+wartość funkcji dla x to amplituda tego odniesienia.
+
+
+Jeżeli natomiast przyjmiemy nienormalne odniesienia wraz z ich relacją
+do odniesień normalnych, to funkcję f(x) możemy przedstawić jako np. F(ω) -
+każda wartość ω to jedno z odniesień nienormalnych, wartość funkcji F dla ω
+to amplituda tego odniesienia. 
+
+
+I zasada jest taka, że zawsze zamieniając ω w x z F uzyskamy f.
+
+Oraz zawsze zamieniając x w ω z f uzyskamy F.
+
+**Uwaga**: zazwyczaj x i ω traktuje się jako liczby będące indeksami jakichś funkcji,
+jest to skrót myślowy, x i ω są zbiorami funkcji bazowych o różnych parametrach, np:
+
+* x zazwyczaj oznacza deltę Dirack'a z ustawionym środkiem na x,
+* ω zazwyczaj oznacza sumę sinusa i cosinusa ze skalami ustawionymi na ω.
+
+
+**Ale teraz podstawowe pytanie, po co to wszystko jak dobrze jest jak jest?**
+
+Okazuje się, że żeby przesłać informacje pomiędzy Europą a Ameryką drogą inną
+niż pocztową, trzeba się posłużyć falami elektromagnetycznymi. A jak pamiętamy
+z fizyki, rozprzestrzeniają się zmienne pola elektromagnetyczne, które można
+rozłożyć na fale płaskie, które opisujemy matematycznie sinusoidami o różnych
+częstotliwościach. Także w tym świecie normalnym odniesieniem są sinusoidy
+a nie pojedyńcze wartości. Jednak na szczęście znamy relację pomiędy tymi
+odniesieniami (w postaci Analizy Fourier'owskiej), i dzięki temu mamy radio.
+
+
+W wykładzie tym przedstawimy: 
+
+* wzory na ciągły szereg Fourier'a (CFT), 
+* wzory na dyskretny szereg Fourier'a (DFT),
+* wzory na transformację Fourier'a (FT),
+* geometryczna interpretacja okresu, częstotliwości, jednostek,
+* skąd biorą się te wzory i związki pomiędzy nimi,
+* uwagi na temat korzystania z gotowego oprogramowania do DFT,
+* uwagi na temat interpolacji trygonometrycznej.
+
+Może dodatkowo powiemy sobie krótko o:
+
+* sposobie budowy filtrów w dziedzinie Fourier'a,
+* porównaniu ich z klasycznymi filtrami RC, LC,
+* twierdzeniu Shanon'a-Nyquist'a,
+* schemacie ideowym budowy i komunikacji radjowej UKF (ang. UHF).
+
+A na egzamin:
+
+* graficzna DFT dla bazy piłowej,
+* odwrotna DFT dla bazy piłowej,
+* wyznaczenie i interpretacja częstotliwości Nyquist'a,
+* projektowanie filtru w oparciu o DFT,
+* wymagania co do komponentów radia pracującego w zadanym paśmie częstotliwości.
+
+
+### Szereg Fourier'a (CFT)
+
+Funkcję *f(t)* możemy przedstawić w odniesieniu do sinusoid w następujący sposób:
+
+$$
+f(t)=
+\left(a_0 = \frac{a_{k=0}}{2}\right)
++\sum _{k=1}^{N}\left(
+    a_{k}\cos \left({\frac {2\pi}{T}kt}\right)
+  + b_{k}\sin \left({\frac {2\pi}{T}kt}\right)
+\right)
+$$
+$$
+{\displaystyle {\begin{aligned}
+a_{k}&=\frac
+{\int_{0}^{T}f(t)\cdot \cos \left({\frac {2\pi}{T}kt}\right)\,dt}
+{\int_{0}^{T}\cos^2\left({\frac {2\pi}{T}kt}\right)\,dt}
+= {\frac {2}{T}}\int_{0}^{T}f(t)\cdot \cos \left({\frac {2\pi}{T}kt}\right)\,dt,\,k=1,2,3,\cdots\\
+b_{k}&=\frac
+{\int_{0}^{T}f(t)\cdot \sin \left({\frac {2\pi}{T}kt}\right)\,dt}
+{\int_{0}^{T}\sin^2\left({\frac {2\pi}{T}kt}\right)\,dt}
+= {\frac {2}{T}}\int_{0}^{T}f(t)\cdot \sin \left({\frac {2\pi}{T}kt}\right)\,dt,\,k=1,2,3,\cdots.
+\end{aligned}}}
+$$
+$$
+{\displaystyle {\begin{aligned}
+a_{0}&= \frac
+{\int_{0}^{T}f(t)\cdot 1(t)\,dt}
+{\left(\int_{0}^{T}1^2(t)\,dt\right)}
+= {\frac {1}{T}}\int_{0}^{T}f(t)\,dt,\\
+b_{0}&=\frac
+{\int_{0}^{T}f(t)\cdot 0(t)\,dt}
+{\left(\int_{0}^{T}0^2(t)\,dt\right)}
+= {\frac {1}{0}}0 \stackrel{przyjmujemy}{=} 0.
+\end{aligned}}}
+$$
+*1(t)* oraz *0(t)* to oczywiście w tym przypadku funkcje stałe wynikające z tego, że *cos(0) = 1*, a *sin(0) = 0*.
+
+**Uwaga**
+
+Zauważmy że licząc $a_0$ bezpośrednio to wynik jest 2 razy mniejszy niż gdybyśmy liczyli z $a_{k=0}$ (często z taką właśnie postacią spotykamy się w wyrażeniu na szereg Fourier'a w literaturze) :
+$$ a_0 = \frac{a_{k=0}}{2} $$
+natomiast $b_0$ nie różni się od $b_{k=0}$: 
+$$ b_0 = b_{k=0} = 0 $$
+
+**No więc wygląda to skąplikowanie!**, natomiast w rzeczywistości nie jest tak źle, tak to wygląda
+ponieważ na jednym obrazie mamy od razu wszystkie szczeguły, jest to jednak postać, którą można
+bezpośrednio wprowadzić na komputer. Spróbujmy to zrobić i narysować kilka funkcji oraz ich
+przybliżonych reprezentacji za pomocą uciętych szeregów Fourier'a.
+
+#### Przykład
+
+Teraz zaobserwujemy jak to wygląda w praktyce. Poniżej jest kod w R generujący N pierwszych wyrazów
+szeregu Fourier'a. 
+
+```{r Fourier serie implementation}
+
+## zmienia funkcję f(t) o okresie T w szereg tej funkcji do N-tego wyrazu SF_fTN(t)
+## przy N → ∞ wartości tych funkcji w punktach [0, T] są równe f(t):
+## f(t) = SF_fT∞(t) 
+GenerateSF_ftN <- function(f, T, N) {
+  ## wartości współczynników a_0 i b_0 :
+  ## integrate to funkcja licząca numerycznie wartość całki
+  a_fT0_const <- integrate(f = f, lower = 0, upper = T)$value / T
+  b_fT0_const <- 0
+
+  ## funkcje obliczające a_k i b_k dla zadanej funkcji f, 
+  ## jej okresu T, oraz indeksu k  
+  a_fTk <- function(f, T, k) {
+    integrand <- function(t) f(t)*cos(2*pi/T*k*t)
+    integrate(f = integrand, lower = 0, upper = T)$value * 2 / T
+  } 
+  b_fTk <- function(f, T, k) {
+    integrand <- function(t) f(t)*sin(2*pi/T*k*t)
+    integrate(f = integrand, lower = 0, upper = T)$value * 2 / T
+  } 
+  
+  ## funkcje obliczające k-ty wyraz szeregu 
+  ##(na podstawie zadanej funkcji f, jej okresu T, oraz indeksu k):
+  F_fTk <- function(f, T, k) { 
+    a_fTk_const <- a_fTk(f,T,k)
+    b_fTk_const <- b_fTk(f,T,k)
+    # ɷ_kT = 2*pi/T*k
+    function(t) a_fTk_const * cos(2*pi/T*k * t) + b_fTk_const * sin(2*pi/T*k *t )
+  }
+  
+  if(N == 0) return(function(t) a_fT0_const + 0 * t)
+  
+  ## zbiór funkcji obliczających 1 do N-ty wyraz szeregu:
+  F_fT1N <- sapply(1:N, function(k) F_fTk(f,T,k))
+  
+  ## funkcja sumująca szereg (poprzez kumulowanie wcześniejszych wartości)
+  SF_ftN <- function(t) Reduce(
+    # funkcja sumująca sumę wcześniejszych wyrazow z następnym wyrazem
+    f = function(F_fT1kt_const, F_fTk) F_fT1kt_const + F_fTk(t), 
+    # iterujemy funkcje obliczające k-ty wyraz szeregu
+    x = F_fT1N, 
+    # pierwszą sumą szeregu są współczynniki a_0 i b_0
+    init = a_fT0_const + b_fT0_const
+  )
+  SF_ftN
+}
+
+# GenerateSF_ftN(sin, 2, 5)((0:10)/10*2)
+```
+
+
+Jako przykład narysujemy funkcję f(t) = sin(t) w przedziale [0, 2] (okres T = 2) oraz jej 
+przybliżenie w postaci obcięcia serii Fourier'a do 3-ciego elementu (N = 2) SF_fTN.
+Umieszczono też kilka wcześniejszych obcięć.
+
+
+
+
+
+
+```{r utils, include=FALSE}
+
+## math expressions
+# https://github.com/stefano-meschiari/latex2exp
+# DescTools: Tools for Descriptive Statistics
+# https://cran.r-project.org/web/packages/DescTools/index.html
+
+## object inspection!!!!!!!!!!!!!:
+inspect <- dput
+inspect2 <- str
+## application of list instead of arguments to function
+# do.call("+", list(1,2))
+## list append, concatension
+# c(list(1,2,3), list("a","b","c"))
+
+
+## transposes list of lists
+## my implementation of purrr:transpose (list of list)
+## eg.:
+## ll <- list(a=list("1"=1,"2"=2), b=list("1"=3,"2"=4)) 
+## tll <- transposeLoL(ll)
+## ll[["a"]][["1"]] == tll[["1"]][["a"]] # TRUE
+transposeLoL <- function(set) {
+  getCol <- function(data, colName) Map(function(row) row[[colName]], data)
+  Map(function(n, i) getCol(set, i), names(set[[1]]), 1:length(set[[1]]))
+}
+
+## makes one arg function f periodic with period T
+periodize <- function(f, T) { force(T); function(t) f(t - floor(t/T) * T)}
+## polygon vertexes coordinates between curve (x, y) and (x2, y2) as list(x,y)
+polyVertexesBetween <- function(x, y, x2,y2) list(x=c(x, rev(x2)), y=c(y, rev(y2)))
+## polygon vertexes coordinates between curve (x, y) and line (x, h) as list(x,y)
+polyVertexesFrom <- function(x, y, h = 0) 
+  polyVertexesBetween(x, y, x2 = c(x[1], x[length(x)]), y2 = c(h, h))
+## add color transparency alpha, value between 0 (transparent) and 255 (opaque)
+## using col2rgb, alpha 0 to 255
+transparentize2 <- function(color, alpha = 128) col2rgb(color, alpha = TRUE)["alpha",] <- alpha
+## using adjustcolor(color, alpha.f = alpha)
+transparentize <- function(color, alpha = 0.5) adjustcolor(colors, alpha.f = alpha)
+
+## add col column to list of list with rainbow colors
+colorSet <- function(set, colors = rainbow(length(set))) 
+  mapply(function(row, color) {row$col <- color; row;}, set, colors)
+
+## colors for each row
+colorsOfSet  <- function(set, alpha = 1) rainbow(length(set), alpha)
+## polygons list(x,y) for each row
+polyVertexesOfSet <- function(set) Map(function(row) polyVertexesFrom(row$x, row$y), set)
+## range of selected columns (default x, y) returns ranges as list(x, y)
+rangeOfSet <- function(set, colX = "x", colY = "y") {
+  tset <- transposeLoL(set)
+  list(x = range(tset[[colX]]), y = range(tset[[colY]]))
+} 
+
+```
+
+
+
+```{r plot fourier serie of sin t, echo=FALSE}
+
+ts <- (0:100)/100*2
+ts2 <- (0:300)/300*6 - 2
+
+# data as rows
+set <- list(
+  list(x=ts, y=sin(ts), legend="sin(t)")
+  , list(x=ts, y=GenerateSF_ftN(sin, 2, 0)(ts), legend="SF(f=sin,T=2,N=0)(t)")
+  , list(x=ts, y=GenerateSF_ftN(sin, 2, 1)(ts), legend="SF(f=sin,T=2,N=1)(t)")
+  , list(x=ts2, y=GenerateSF_ftN(sin, 2, 2)(ts2), legend="SF(f=sin,T=2,N=2)(t)")
+  # , list(x=ts, y=GenerateSF_ftN(sin, 2, 5)(ts), legend="SF(f=sin,T=2,N=5)(t)")
+)
+# data as columns
+tset <- transposeLoL(set)
+polygonVertexes <- polyVertexesOfSet(set)
+colors <- colorsOfSet(set)
+colors.semiTransp <- transparentize(colors) # make colors semitransparent
+legends <- tset$legend
+ranges <- rangeOfSet(set)
+linetypes <- 1 # will be recycled
+
+
+
+plot(ranges,      # 2 points - lower left corner, upper right corner
+     type="n",    # don't plot anything, just prepare scales (from ranges) and defaults
+     ann = FALSE, # don't generate axis labels, ... etc.
+     tck = 0.02   # ticks relative length and orientation
+     )
+# plot lines
+invisible(mapply(lines, x=tset$x, y=tset$y, type = "l", lwd = 2, col=colors ))
+# plot fill
+invisible(mapply(polygon, polygonVertexes, col = colors.semiTransp ))
+
+
+title(main = "Seria Fourier'a do N=2 dla sin(t) z T=2",  # title
+      xlab = "Amplituda", # x label
+      ylab = "Czas [s]"  # y label
+      # col.main = "black", # color of title (eg. "blue")
+      # col.lab = "black",  # color of axis labels (eg. gray(.8))
+      # cex.main = 1.2,       # magnification of title (1 = normal)
+      # cex.lab = 1.0,      # magnification of labels (1 = normal)
+      # font.main = 1,      # font type of title (1=norm,2=bold,3=italic,4=bolditalic,5=symbol)
+      # font.lab = 2        # font type of labels
+      )
+
+legend("bottomright", 
+       legend = legends, 
+       lty = linetypes,  # legend items line types (1=straight)
+       col=colors,       # legend items line colors
+       title="Funkcje",  # legend title
+       cex=0.8,            # legend text magnification
+       )
+grid()
+
+
+
+## Saving to file whats visible
+# invisible(dev.print(device = svg, "FurierSerie.svg"))
+```
+
+Zauważmy, że we wzór na szereg jest wbudowana periodyczność odcisku oryginalnej funkcji f(t). 
+Oryginalna funkcja jest traktowana jako kształt określony dla okresu T oraz zasada, że ten
+kształt jest powtarzany periodycznie. W takim ujęciu sam kształt nie musi być określony dla 
+argumentów poza okresem T. 
+
+Na przykład jako kształt periodyczny w przedziale [0,3] moglibyśmy przyjąć funkcję f(t) = t, 
+wtedy f(1.5) = 1.5, ale też zgodnie z definicją periodyczności wartość dla 3+1.5 powinna wynosić 1.5, 
+a nie 4.5 jak by wynikało z samego wzoru funkcji f(3+1.5) = 4.5.
+
+Natomiast seria furiera generuje wzór, który daje spodziewane rezultaty dla dowolnych argumentów. 
+
+
+
+```{r plot fourier serie of t, echo=FALSE}
+ts <- (0:100)/100*3
+ts2 <- (0:300)/300*3*3 - 3*1
+
+f <- function(t) t
+f_periodic <- periodize(f, 3)
+  
+# data as rows
+set <- list(
+  list(x=ts2, y=f(ts2), legend="f(t) = t")
+  , list(x=ts2, y=f_periodic(ts2), legend="f(t) = t, z okresem T = 3")
+  , list(x=ts, y=GenerateSF_ftN(f, 3, 0)(ts), legend="SF(f=t,T=3,N=0)(t)")
+  , list(x=ts, y=GenerateSF_ftN(f, 3, 1)(ts), legend="SF(f=t,T=3,N=1)(t)")
+  , list(x=ts2, y=GenerateSF_ftN(f, 3, 2)(ts2), legend="SF(f=t,T=3,N=2)(t)")
+  # , list(x=ts, y=GenerateSF_ftN(f, 3, 5)(ts), legend="SF(f=sin,T=3,N=5)(t)")
+)
+# data as columns
+tset <- transposeLoL(set)
+polygonVertexes <- polyVertexesOfSet(set)
+colors <- colorsOfSet(set)
+colors.semiTransp <- transparentize(colors) # make colors semitransparent
+legends <- tset$legend
+ranges <- rangeOfSet(set)
+linetypes <- 1 # will be recycled
+
+# plot page
+plot(ranges, type="n", ann = FALSE, tck = 0.02)
+# plot lines
+invisible(mapply(lines, x=tset$x, y=tset$y, type = "l", lwd = 2, col=colors ))
+# plot fill
+invisible(mapply(polygon, polygonVertexes, col = colors.semiTransp ))
+
+title(main = "Seria Fourier'a do N=2 dla t z T=3",  # title
+      xlab = "Amplituda", # x label
+      ylab = "Czas [s]"  # y label
+      )
+
+legend("bottomright", legend = legends, lty = linetypes, col=colors, cex=0.8)
+grid()
+```
+
+
+
+
+Przykładowo pierwsze 3 wyrazy szeregu Fourier'a dla funkcji *f(t) = sin(t)* wziętej z okresem *T = 2 [s]* są następujące:
+
+```{r echo=FALSE}
+fourierCoefficients <- function(f, T, N) {
+  ## wartości współczynników a_0 i b_0 :
+  ## integrate to funkcja licząca numerycznie wartość całki
+  a_fT0_const <- integrate(f = f, lower = 0, upper = T)$value / T
+  b_fT0_const <- 0
+
+  ## funkcje obliczające a_k i b_k dla zadanej funkcji f, 
+  ## jej okresu T, oraz indeksu k  
+  a_fTk <- function(f, T, k) {
+    integrand <- function(t) f(t)*cos(2*pi/T*k*t)
+    integrate(f = integrand, lower = 0, upper = T)$value * 2 / T
+  } 
+  b_fTk <- function(f, T, k) {
+    integrand <- function(t) f(t)*sin(2*pi/T*k*t)
+    integrate(f = integrand, lower = 0, upper = T)$value * 2 / T
+  } 
+  
+  ## zbiór współczynników a dla k = 1 do N:
+  a_fT1N_const <- sapply(1:N, function(k) a_fTk(f,T,k))
+  ## zbiór współczynników a dla k = 1 do N:
+  b_fT1N_const <- sapply(1:N, function(k) b_fTk(f,T,k))
+  
+  list(a=c(a_fT0_const, a_fT1N_const), b=c(b_fT0_const, b_fT1N_const))
+}
+
+fourierCoefficients(sin, 2, 2)
+```
+W ten sposób przybliżenie funkcji *f(t)=sin(t)* wyciętej w przedziale [0,T=2] i powtarzającej się z okresem T=2
+w postaci obciętego szeregu Fourier'a po 3 pierwszych wyrazach wynosi:
+
+$$
+F_{N=2, T=2, f=sin}(t)=
+0.7 
++ \left[- 0.16 \cos \left({\frac {2\pi}{2}1t}\right) - 0.32 \sin \left({\frac {2\pi}{2}1t}\right)\right]
++ \left[- 0.04 \cos \left({\frac {2\pi}{2}2t}\right) - 0.15 \sin \left({\frac {2\pi}{2}2t}\right)\right]
+$$
+
+
+$$ F_{N=2, T=2, f=sin}(t) \approx sin(t) $$
+$$ F_{N=\infty, T=2, f=sin}(t) = sin(t) $$
+
+```{r functional bases integrals, echo=FALSE, include=FALSE}
+integrate(function(t) sqrt(1+0*t), 0, 2*pi)
+2*pi
+integrate(function(t) sqrt(1+4*cos(2*t)^2), 0, 2*pi)
+integrate(function(t) sqrt(1+cos(t)^2), 0, 2*pi)
+integrate(function(t) sin(t)^2, 0, 2*pi)
+```
+
+
+
+### Skąd to wszystko się bierze?
+
+Patrząc na szereg Fourier'a z logicznej strony (tak jak we wstępie), 
+szereg ten jest rzutowaniem zadanej funkcji *f(t)* na (znormalizowane) ortogonalne funkcje bazowe.
+
+
+Zbiór funkcji ortogonalnych to innymi słowy zbiór unikalnych składników z których wszystko jest zbudowane
+(coś jak byśmy sobie wyobrazili, że świat jest zbudowany z atomów). Przyjrzyjmy się temu bliżej.
+
+#### Zbiór funkcji linowo niezależnych
+
+
+Zacznijmy od tego co to znaczy, że funkcje są liniowo niezależne. 
+Załóżmy, że mamy 5 funkcji: $b_1(t), b_2(t), b_3(t), b_4(t), b_5(t)$, 
+to funkcja $b_1(t)$ będzie liniowo niezależna względem reszty, gdy nie będzie
+się jej dało przedstawić za pomocą liowej kombinacji pozostałych:
+
+
+$$ b_1(t) \neq a_2 b_2(t) + a_3 b_3(t) +a_4 b_4(t) + a_5 b_5(t) $$
+niezależnie od tego jakie parametry $a_2, a_3, a_4, a_5$ wybierzemy.
+
+
+
+Najczęściej tak jest, ale teraz przykład gdy tak nie jest, przyjmimy zbiór funkcji $b_1,b_2,b_3$ i
+przeanalizujmy czy to jest zbiór funkcji liniowo niezależnych:
+$$b_1(t) = sin^2(t)$$
+$$b_2(t)=1$$
+$$b_3(t)=cos(2t)$$
+Pierwsze sprawdźmy zależności parami (tutaj będzie OK):
+$$sin^2(t) \neq a_2 1$$
+$$ sin^2(t) \neq a_3 cos(2t)$$
+Teraz sprawdźmy grupami (tutaj wychodzi zależność liniowa):
+$$sin^2(t) = \frac{1}{2} -  \frac{1}{2} cos(2t)$$
+$$b_1(t) = \frac{1}{2} b_2(t) -  \frac{1}{2} b_3(t)$$
+
+Podsumowując, funkcje będą liniowo niezależne gdy będą miały różne kształty
+(niezależnie od skalowania przyjmowanych przez nie wartości - skala w pionie),
+i nie będą sumami przyjętych kształtów.
+
+
+
+#### Zbiór funkcji liniowo zależnych
+
+Pierwsza wybrana funkcja, może być zawsze uznana za niezależną linowo i ortogonalną.
+Więc wszystko zaczyna się właściwie dziać od drugiej funkcji, przyjmijmy na przykład:
+$$b_1(t) = \sin(t)$$
+$$b_2(t) = \sin(2t)$$
+Jakie funkcje będą zależne od $b_1(t)$ linowo (podobne co do skalowania i sumowania)? np.:
+$$z_1(t) = 2 \sin(t)$$
+oraz wszystkie inne tego typu (z innym współczynnikiem skali).
+
+
+Weźmy teraz na przykład funkcję:
+$$z_{12}(t) = 2 \sin(t) + 5\sin(2t)$$
+
+* Czy będzie ona liniowo niezależna od $b_1(t) = \sin(t)$? 
+Tak, ponieważ ma dodatkowy człon $5\sin(2t)$.
+
+* Czy będzie ona liniowo niezależna od $b_2(t) = \sin(2t)$? 
+Tak, ponieważ ma dodatkowy człon $2\sin(t)$.
+
+* Czy będzie ona liniowo niezależna od $b_1(t) = \sin(t)$ i $b_2(t) = \sin(2t)$? 
+**Nie**, funkcja jest liniowo zależna od odnoszonego zbioru funkcji.
+(Możemy znaleźć takie sumy i skale funkcji z odnoszonego zbioru, że uzyskamy $z_{12}$.)
+
+
+
+#### Zbiór funkcji ortogonalnych
+
+Ciekawe pytanie nasuwa się... 
+
+* Ile w jednej funkcji jest drugiej?
+* Czy to logiczne pytanie, na które można odpowiedzieć?
+
+Żeby na to odpowiedzieć, najpierw założymy, że funkcję zastępujemy
+jej próbkami, przy czym musimy prowadzić nasze rozważania,
+tak żeby one obowiązywały dla dowolnie gęstego próbkowania.
+
+Weźmy teraz dwie funkcje o różnych kształtach co do skalowania
+w pionie oraz ich przykładowe próbkowania (z poprzedniej sekcji,
+wiadomo, że funkcje te będą wzajemnie liniowo niezależne).
+
+
+$$b_1(t) = \sin(t)$$
+$$b_2(t) = \sin(2t)$$
+
+
+```{r plot discrete Fourier serie, echo=FALSE}
+
+## https://www.datamentor.io/r-programming/subplot/
+## https://cran.r-project.org/web/packages/egg/vignettes/Ecosystem.html
+
+
+t <- (0:100)/100 * 2 * pi
+dt <- (1:12)/12 * 2 * pi
+stepSin_t = stepfun(dt, c(sin(0), sin(dt)))
+stepSin_2t = stepfun(dt, c(sin(2*0), sin(2*dt)))
+
+op <- par(mfrow = c(2,1), mai = c(0.5,1,0.1,0.1), tck = 0.05)
+
+
+plot(stepSin_t, 
+     main = NULL, xlab = NULL, ylab = "sin(t)", 
+     xlim = c(0, 2*pi), ylim = c(-2,2), 
+     tck = 0.05 )
+lines(t, sin(t), col = "red", lwd = 2)
+grid()
+
+
+plot(stepSin_2t, 
+     main = NULL, xlab = NULL, ylab = "sin(2t)", 
+     xlim = c(0, 2*pi), ylim = c(-2,2), 
+     tck = 0.05 )
+lines(t, sin(2*t), col = "red", lwd = 2)
+grid()
+
+
+par(op)
+
+
+```
+
+
+
+```{r plot discrete functions, echo=FALSE}
+
+fromEnd <- function(x, i = 1) { return( x[length(x) - i + 1] ) }
+
+stepfunpacket <- function(x,y, 
+         dxhead = x[2] - x[1], 
+         dxtail = fromEnd(x, 1) - fromEnd(x, 2)) {
+  f <- stepfun(
+    c(x[1] - dxhead, x, fromEnd(x , 1) + dxtail), 
+    c(0, 0, y, 0), 
+    f = 0)
+  return(f)
+} 
+
+
+
+stepfundiscrete <- function(y, dx = 1) {
+  x <- (0:(length(y)-1))*dx
+  xs <- c(-dx, x, fromEnd(x, 1) + dx)
+  stepfun(xs, c(0, 0, y, 0), f = 0)
+  # xs <- c(x, fromEnd(x, 1) + dx)
+  # stepfun(xs, c(0, y, 0), f = 0)
+}
+
+
+f1 <- stepfunpacket(c(.1,.2,.3,.6), c(1,2,3,4), dxhead = 0.1, dxtail = 0.1)
+f2 <- stepfundiscrete(c(1,2,3,4))
+
+plot(f1)
+plot(f2)
+```
+
+
+
+
+```{r next, echo=FALSE}
+
+
+```
+
+
+
+mis anetka:)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+$$ f_k(t) = a_k\cos\left(\frac{2\pi}{T}kt\right) + b_k\sin\left(\frac{2\pi}{T}kt\right) $$
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

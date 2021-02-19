@@ -1,0 +1,120 @@
+<math xmlns="http://www.w3.org/1998/Math/MathML" alttext="{\displaystyle {\begin{aligned}a_{n}&amp;={\frac {2}{P}}\int _{P}s(x)\cdot \cos \left(2\pi x{\tfrac {n}{P}}\right)\,dx\\b_{n}&amp;={\frac {2}{P}}\int _{P}s(x)\cdot \sin \left(2\pi x{\tfrac {n}{P}}\right)\,dx.\end{aligned}}}">
+  <semantics>
+    <mrow class="MJX-TeXAtom-ORD">
+      <mstyle displaystyle="true" scriptlevel="0">
+        <mrow class="MJX-TeXAtom-ORD">
+          <mtable columnalign="right left right left right left right left right left right left" rowspacing="3pt" columnspacing="0em 2em 0em 2em 0em 2em 0em 2em 0em 2em 0em" displaystyle="true">
+            <mtr>
+              <mtd>
+                <msub>
+                  <mi>a</mi>
+                  <mrow class="MJX-TeXAtom-ORD">
+                    <mi>n</mi>
+                  </mrow>
+                </msub>
+              </mtd>
+              <mtd>
+                <mi/>
+                <mo>=</mo>
+                <mrow class="MJX-TeXAtom-ORD">
+                  <mfrac>
+                    <mn>2</mn>
+                    <mi>P</mi>
+                  </mfrac>
+                </mrow>
+                <msub>
+                  <mo>∫<!-- ∫ --></mo>
+                  <mrow class="MJX-TeXAtom-ORD">
+                    <mi>P</mi>
+                  </mrow>
+                </msub>
+                <mi>s</mi>
+                <mo stretchy="false">(</mo>
+                <mi>x</mi>
+                <mo stretchy="false">)</mo>
+                <mo>⋅<!-- ⋅ --></mo>
+                <mi>cos</mi>
+                <mo>⁡<!-- ⁡ --></mo>
+                <mrow>
+                  <mo>(</mo>
+                  <mrow>
+                    <mn>2</mn>
+                    <mi>π<!-- π --></mi>
+                    <mi>x</mi>
+                    <mrow class="MJX-TeXAtom-ORD">
+                      <mstyle displaystyle="false" scriptlevel="0">
+                        <mfrac>
+                          <mi>n</mi>
+                          <mi>P</mi>
+                        </mfrac>
+                      </mstyle>
+                    </mrow>
+                  </mrow>
+                  <mo>)</mo>
+                </mrow>
+                <mspace width="thinmathspace"/>
+                <mi>d</mi>
+                <mi>x</mi>
+              </mtd>
+            </mtr>
+            <mtr>
+              <mtd>
+                <msub>
+                  <mi>b</mi>
+                  <mrow class="MJX-TeXAtom-ORD">
+                    <mi>n</mi>
+                  </mrow>
+                </msub>
+              </mtd>
+              <mtd>
+                <mi/>
+                <mo>=</mo>
+                <mrow class="MJX-TeXAtom-ORD">
+                  <mfrac>
+                    <mn>2</mn>
+                    <mi>P</mi>
+                  </mfrac>
+                </mrow>
+                <msub>
+                  <mo>∫<!-- ∫ --></mo>
+                  <mrow class="MJX-TeXAtom-ORD">
+                    <mi>P</mi>
+                  </mrow>
+                </msub>
+                <mi>s</mi>
+                <mo stretchy="false">(</mo>
+                <mi>x</mi>
+                <mo stretchy="false">)</mo>
+                <mo>⋅<!-- ⋅ --></mo>
+                <mi>sin</mi>
+                <mo>⁡<!-- ⁡ --></mo>
+                <mrow>
+                  <mo>(</mo>
+                  <mrow>
+                    <mn>2</mn>
+                    <mi>π<!-- π --></mi>
+                    <mi>x</mi>
+                    <mrow class="MJX-TeXAtom-ORD">
+                      <mstyle displaystyle="false" scriptlevel="0">
+                        <mfrac>
+                          <mi>n</mi>
+                          <mi>P</mi>
+                        </mfrac>
+                      </mstyle>
+                    </mrow>
+                  </mrow>
+                  <mo>)</mo>
+                </mrow>
+                <mspace width="thinmathspace"/>
+                <mi>d</mi>
+                <mi>x</mi>
+                <mo>.</mo>
+              </mtd>
+            </mtr>
+          </mtable>
+        </mrow>
+      </mstyle>
+    </mrow>
+    <annotation encoding="application/x-tex">{\displaystyle {\begin{aligned}a_{n}&amp;={\frac {2}{P}}\int _{P}s(x)\cdot \cos \left(2\pi x{\tfrac {n}{P}}\right)\,dx\\b_{n}&amp;={\frac {2}{P}}\int _{P}s(x)\cdot \sin \left(2\pi x{\tfrac {n}{P}}\right)\,dx.\end{aligned}}}</annotation>
+  </semantics>
+</math>

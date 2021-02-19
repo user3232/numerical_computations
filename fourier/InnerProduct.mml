@@ -1,0 +1,56 @@
+<math xmlns="http://www.w3.org/1998/Math/MathML" alttext="{\displaystyle \langle f,\,g\rangle \;\triangleq \;{\frac {1}{2\pi }}\int _{-\pi }^{\pi }f(x){\overline {g(x)}}\,dx.}">
+  <semantics>
+    <mrow class="MJX-TeXAtom-ORD">
+      <mstyle displaystyle="true" scriptlevel="0">
+        <mo fence="false" stretchy="false">⟨<!-- ⟨ --></mo>
+        <mi>f</mi>
+        <mo>,</mo>
+        <mspace width="thinmathspace"/>
+        <mi>g</mi>
+        <mo fence="false" stretchy="false">⟩<!-- ⟩ --></mo>
+        <mspace width="thickmathspace"/>
+        <mo>≜<!-- ≜ --></mo>
+        <mspace width="thickmathspace"/>
+        <mrow class="MJX-TeXAtom-ORD">
+          <mfrac>
+            <mn>1</mn>
+            <mrow>
+              <mn>2</mn>
+              <mi>π<!-- π --></mi>
+            </mrow>
+          </mfrac>
+        </mrow>
+        <msubsup>
+          <mo>∫<!-- ∫ --></mo>
+          <mrow class="MJX-TeXAtom-ORD">
+            <mo>−<!-- − --></mo>
+            <mi>π<!-- π --></mi>
+          </mrow>
+          <mrow class="MJX-TeXAtom-ORD">
+            <mi>π<!-- π --></mi>
+          </mrow>
+        </msubsup>
+        <mi>f</mi>
+        <mo stretchy="false">(</mo>
+        <mi>x</mi>
+        <mo stretchy="false">)</mo>
+        <mrow class="MJX-TeXAtom-ORD">
+          <mover>
+            <mrow>
+              <mi>g</mi>
+              <mo stretchy="false">(</mo>
+              <mi>x</mi>
+              <mo stretchy="false">)</mo>
+            </mrow>
+            <mo accent="false">¯<!-- ¯ --></mo>
+          </mover>
+        </mrow>
+        <mspace width="thinmathspace"/>
+        <mi>d</mi>
+        <mi>x</mi>
+        <mo>.</mo>
+      </mstyle>
+    </mrow>
+    <annotation encoding="application/x-tex">{\displaystyle \langle f,\,g\rangle \;\triangleq \;{\frac {1}{2\pi }}\int _{-\pi }^{\pi }f(x){\overline {g(x)}}\,dx.}</annotation>
+  </semantics>
+</math>

@@ -1,0 +1,32 @@
+<math xmlns="http://www.w3.org/1998/Math/MathML" alttext="{\displaystyle \{e_{n}=e^{inx}:n\in \mathbb {Z} \}}">
+  <semantics>
+    <mrow class="MJX-TeXAtom-ORD">
+      <mstyle displaystyle="true" scriptlevel="0">
+        <mo fence="false" stretchy="false">{</mo>
+        <msub>
+          <mi>e</mi>
+          <mrow class="MJX-TeXAtom-ORD">
+            <mi>n</mi>
+          </mrow>
+        </msub>
+        <mo>=</mo>
+        <msup>
+          <mi>e</mi>
+          <mrow class="MJX-TeXAtom-ORD">
+            <mi>i</mi>
+            <mi>n</mi>
+            <mi>x</mi>
+          </mrow>
+        </msup>
+        <mo>:</mo>
+        <mi>n</mi>
+        <mo>∈<!-- ∈ --></mo>
+        <mrow class="MJX-TeXAtom-ORD">
+          <mi mathvariant="double-struck">Z</mi>
+        </mrow>
+        <mo fence="false" stretchy="false">}</mo>
+      </mstyle>
+    </mrow>
+    <annotation encoding="application/x-tex">{\displaystyle \{e_{n}=e^{inx}:n\in \mathbb {Z} \}}</annotation>
+  </semantics>
+</math>

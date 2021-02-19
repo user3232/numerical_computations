@@ -1,0 +1,501 @@
+---
+title: "Differential geometry"
+output: html_notebook
+---
+
+```{r}
+library(plot3D)
+library(magrittr) # pipe: %>%
+library(zeallot) # unpacking: %<-% 
+
+## very interesting!!!:
+# relist(flesh, skeleton)
+# unlist
+
+
+# pointwiseProduct(a=1:3,b=1:3)
+# [1] 1 4 9
+pointwiseProduct <- function(...) Reduce(`*`, list(...))
+
+
+# dotProduct(1:3,1:3)
+# [1] 14
+dotProduct <- function(x, y) sum(x*y)
+# pointwiseDotProduct <- function(l1, l2) 0
+
+
+# listToMatrix(list(x=1:3,y=1:3,z=1:3)) 
+#   [,1] [,2] [,3]
+# x    1    2    3
+# y    1    2    3
+# z    1    2    3
+listToMatrix <- function(list) do.call(rbind, list)
+  
+
+# pointwiseNorm(x=1:3,y=1:3,z=1:3) 
+# [1] 1.732051 3.464102 5.196152
+pointwiseNorm <- function(...) {
+  sapply(list(...), function(v) v^2) %>%  rowSums %>% sqrt
+}
+
+
+# normOfVectors(x = 1:3, y = 1:3, z = 1:3)
+# [1] 6.480741
+# ((1:3)^2+(1:3)^2+(1:3)^2) %>% sum %>% sqrt
+# [1] 6.480741
+normOfVectors <- function(...) cbind(...) %>% norm(., "F")
+
+
+# indexOf.FromToLength(from = -10, to = 20, length.out = 10, e = 5)
+# [1] 6
+indexOf.FromToLength <- function(from, to, length.out, e, lower = TRUE) {
+  ds <- (to - from)/(length.out-1)
+  i <- (e - from)/ds + 1
+  round(i)
+}
+
+
+# indexOf.FromToBy(from = -10, to = 20, by = 31/10, e = 5)
+# [1] 6
+indexOf.FromToBy <- function(from, to, by, e, lower = TRUE) {
+  i <- (e - from)/by + 1
+  round(i)
+}
+
+
+# seq.by(seq(-10, 20, length.out = 10))
+# seq.by(seq(-10, 20, length.out = 10))
+# [1] 3.333333
+# -10 + 9 * 3.333333
+# [1] 20
+seq.by <- function(seq) (seq[length(seq)] - seq[1]) / (length(seq) - 1)
+
+
+# indexOf.Sequence(seq = seq(-10, 20, length.out = 10), e = 5)
+# [1] 6
+indexOf.Sequence <- function(seq, e, lower = TRUE) {
+  len <- length(seq)
+  ds <- (seq[len] - seq[1])/(len-1)
+  i <- (e - seq[1])/ds + 1
+  round(i)
+}
+
+
+```
+
+$$
+\newcommand{\bra}[1]{\left\langle#1\right|}
+\newcommand{\ket}[1]{\left|#1\right\rangle}
+\newcommand{\bracket}[2]{\left\langle#1 \vphantom{#2}\middle|  #2 \vphantom{#1}\right\rangle}
+\newcommand{\matrixel}[3]{\left\langle #1 \vphantom{#2#3} \right| #2 \left| #3 \vphantom{#1#2} \right\rangle}
+\newcommand{\norm}[1]{\left\lVert#1\right\rVert}
+$$
+  
+
+```{r}
+(function(){
+  # approxfun(1,1)
+  # splinefun(1,1)
+  
+})()
+```
+
+
+
+## Parametric curves
+
+
+Parametric curve is somthing like this:
+
+
+$$
+\alpha : I \rightarrow R^3\\
+\alpha(t) = x(t)\ket{1} + y(t)\ket{2} + z(t)\ket{3}
+$$
+It is function mapping interval I into $R^3$ vector.
+
+Norm of curve value, is length from origin to curve point at t:
+
+$$
+\begin{align}
+\norm{\alpha(t)} &= \sqrt{x^2(t) + y^2(t) + z^2(t)}\\
+&= \sqrt{\alpha(t) \cdot \alpha(t)}
+\end{align}
+$$
+
+
+
+```{r}
+
+(function(){
+
+  op <- par(
+    mfrow = c(1,2)
+    # mai = c(0.4,0.4,0.1,0.1),
+    # tck = 0.05 # not working for 3D, should specify somewhere else...
+  )
+  
+  koniczyna <- function(t, s = 1) list(x = (t^3 - 4*t)/s, y= (t^2 - 4)/s, z = 0*t+1)
+  c(x,y,z) %<-% koniczyna(seq(-2.5,2.5, length.out = 100))
+  
+  
+  lines3D (
+    x, y, z, 
+    col = "red", cex.axis = 0.8, cex.lab = 1.2,
+    # add = TRUE,
+    # xlim = c(-2,2),ylim=c(-2,2),cex.lab=1, 
+    r = 5, # eyepoint dist from center
+    d = 3, # perspective greaten < 1 < prespective lessen
+    main = "Koniczyna",
+    ticktype = "detailed", colkey = FALSE, bty = "b2")
+  
+  
+  cylinder <- function(t, a = 1, b = 1) list(x = a*cos(t), y = a*sin(t), z = b*t)
+  c(x,y,z) %<-% cylinder(seq(0, 20, length.out = 100))
+  
+  lines3D (
+    x, y, z, 
+    col = "green", cex.axis = 0.8, cex.lab = 1.2,
+    # add = TRUE,
+    xlim = c(-2,2),ylim=c(-2,2),
+    r = 5, # eyepoint dist from center
+    d = 3, # perspective greaten < 1 < prespective lessen
+    main = "Cylinder",
+    ticktype = "detailed", colkey = FALSE, bty = "b2")
+  
+  par(op)
+
+})()
+
+```
+
+
+
+
+### Example: Attractor??
+
+
+Let α(t) be a parametrized curve which does not pass through the origin.
+If α(t0) is a point of the trace of α closest to the origin and α′(t0) = 0, show
+that the position vector α(t0) is orthogonal to α′(t0).
+
+
+```{r}
+
+(function(){
+curv <- function(t) list(x=t^2+1, y=t-1)
+dCurv <- function(t) list(x=2*t, y=0*t+1)
+t <- seq(-2,2, length.out = 50)
+c(x,y) %<-% curv(t)
+c(dx,dy) %<-% dCurv(t)
+
+
+curv2 <- function(t) sqrt((t^2+1)^2 + (t-1)^2)
+t0 <- optimize(curv2, c(-2,2))$min
+
+## xyPointToStr(list(x=1.1,y=2.22)) == (1.1,2.2)
+xyPointToStr <- function(point, digits = 2) {
+  paste0(
+    "(",
+    signif(point$x, digits = digits), 
+    ",",
+    signif(point$y, digits = digits),
+    ")")
+}
+
+## tToXyToStr(0.55, list(x=1.1,y=2.22)) == "0.5 -> (1.1,2.2)"
+tToXyToStr <- function(t, xy, digits = 2) paste0(signif(t, digits = 2), " -> ", xyPointToStr(xy))
+
+plot(range(x,dx),range(y,dy), 
+     type = "n", # dont draw data
+     xlab = "x",
+     ylab = "y"
+     # ann = FALSE,
+     # xaxt = "n", # no X axis ticks and ticks labels
+     # yaxt = "n"  # no Y axis ticks and ticks labels
+     )
+# par(new =  TRUE) # drows on existing plot, it is reset after plot call
+
+
+lines(x,y, col = "dark blue", lwd = 2, lty = 1)
+points(x,y, col = "dark blue")
+lines(dx,dy, type = "l", col = "dark red", lwd = 2, lty = 2)
+points(dx,dy, col = "dark red")
+arrows(0,0, curv(t0)$x, curv(t0)$y, col = "dark blue")
+text((curv(t0)$x - 0)/2, (curv(t0)$y - 0)/2, 
+     paste0(signif(t0, digits = 2), " -> ", xyPointToStr(curv(t0))),
+     col = "dark blue")
+arrows(0,0, dCurv(t0)$x, dCurv(t0)$y, col = "dark red")
+text((dCurv(t0)$x - 0)/2, (dCurv(t0)$y - 0)/2, 
+     paste0(signif(t0, digits = 2), " -> ", xyPointToStr(dCurv(t0))),
+     col = "dark red")
+abline(h=0)
+abline(v=0)
+grid()
+
+})()
+```
+
+
+
+## Curves parametrized by arc length
+
+Differential of curve α(t) is α'(t) given by (for 3D):
+
+$$
+\alpha'(t) = x'(t)\ket{1} + y'(t)\ket{2} + z'(t)\ket{3}
+$$
+
+Arc length s of regular (points t with α'(t) = 0 are singular) parametrized curve α is:
+
+$$
+\begin{cases}
+s(t) &= \int_{t_0}^{t} \norm{\alpha'(t)} \, dt\\
+\norm{\alpha'(t)} &= \sqrt{(x'(t))^2 + (y'(t))^2 + (z'(t))^2}
+\end{cases}
+$$
+
+||α'(t)|| is tangent curve point distance from origin.
+
+
+Given arc length of curve we can deduce distance from origin of curve tangent:
+
+$$
+\norm{\alpha'(t)} = \frac{ds(t)}{dt}
+$$
+
+Co jeśli ||α'(t)|| = const ? Nie oznacza to, że α(t) jest prostą (ponieważ norma stycznych jest stała).
+Ale wtedy długość łuku s będzie w skali const odpowiadała parametrowi t:
+
+$$
+\begin{cases}
+\norm{\alpha'(t)} &= a\\
+s(t) &= \int_{t_0}^{t} a \, dt = a(t - t_0)
+\end{cases}
+$$
+
+Zakładając teraz że $t_0 = 0$ oraz $a = 1$ mamy:
+
+$$s = t$$
+
+Oznacza to, że krzywa α dla parametru t zachowuje się tak samo
+jak krzywa α dla parametru s (długości krzywej).
+Inaczej mówiąc, punkt krzywej α po przebyciu drogi s będzie
+taki sam jak punkt krzywej α po upływie czasu t, jeżeli
+wartości s i t będą sobie równe.
+
+
+Ciekawym spostrzerzeniem jest to, że mając dowolnie sparametryzowaną krzywą α
+możemy ją zawsze przedstawić w postaci sparametryzowanej przez jej własną długość s.
+Dzieje się tak ponieważ istnieje oczywisty związek pomiędzy 
+długością krzywej a jej zapisem parametrycznym. Robimy to następująco:
+
+
+[Integral of square root of sin](https://math.stackexchange.com/questions/1469846/integration-of-sqrt-sin-x-dx)
+
+$$
+\begin{cases}
+u=\sqrt{\sin x}\\
+x=\sin^{-1}u^2\\
+dx=\dfrac{2u}{\sqrt{1-u^4}}du\\
+\end{cases}
+$$
+
+Therefore:
+
+
+$$
+\therefore\int\sqrt{\sin x}~dx =\int\dfrac{2u^2}{\sqrt{1-u^4}}du
+$$
+
+
+$$
+\int\dfrac{2u^2}{\sqrt{1-u^4}}du
+=\int2u^2\sum\limits_{n=0}^\infty\dfrac{(2n)!u^{4n}}{4^n(n!)^2}du\\
+=\int\sum\limits_{n=0}^\infty\dfrac{(2n)!u^{4n+2}}{2^{2n-1}(n!)^2}du
+=\sum\limits_{n=0}^\infty\dfrac{(2n)!u^{4n+3}}{2^{2n-1}(n!)^2(4n+3)}+C
+$$
+
+Reasuming:
+
+$$
+\int\sqrt{\sin x}~dx
+=\sum\limits_{n=0}^\infty\dfrac{(2n)!\sin^{2n+\frac{3}{2}}x}{2^{2n-1}(n!)^2(4n+3)}+C
+$$
+
+
+
+$$
+\begin{cases}
+u=\sqrt{\cos x}\\
+x=\cos^{-1}u^2\\
+\dfrac{d}{dx}\cos^{-1}(x) = - \dfrac{1}{\sqrt{1-x^2}}\\
+dx=-\dfrac{2u}{\sqrt{1-u^4}}du\\
+\end{cases}
+$$
+
+$$
+\int\sqrt{2 - 2\cos x}~dx\\
+u=\sqrt{2 - 2\cos x}\\
+x=\cos^{-1}u^2\\
+$$
+
+
+
+
+
+## Local theory of curves
+
+
+
+
+### Example: tangent, curvature and torsion
+
+
+Helix have parametric equation:
+
+$$
+\begin{cases}
+\alpha(s) = \left( a \cos(\frac{s}{c}), a \sin(\frac{s}{c}), b\frac{s}{c}  \right)\\
+c^2 = a^2 + b^2
+\end{cases}
+$$
+
+Parameter s is arc length iff norm of α' equals 1. Helix tangent is:
+
+$$
+\alpha'(s) = \left( -\frac{a}{c} \sin(\frac{s}{c}), \frac{a}{c} \cos(\frac{s}{c}), \frac{b}{c}  \right)
+$$
+
+Norm of helix tangent is:
+
+$$
+\begin{align}
+\alpha'(s)\alpha'(s) &= \frac{a^2}{c^2}\sin^2(\frac{s}{c}) + \frac{a^2}{c^2}\cos^2(\frac{s}{c}) + \frac{b^2}{c^2}\\
+&= \frac{a^2}{c^2} + \frac{b^2}{c^2} = \frac{a^2 + b^2}{c^2} = 1
+\end{align}
+$$
+
+It can be seen from figure below.
+
+
+```{r}
+
+(function(){
+  
+  helixGen <- function(a, b) {
+    force(a)
+    force(b)
+    c <- sqrt(a^2+b^2)
+    function(arcLen) list(
+      x = a*cos(arcLen/c),
+      y = a*sin(arcLen/c),
+      z = b*arcLen/c
+    )
+  }
+  
+  helixTangentGen <- function(a,b) {
+    c <- sqrt(a^2+b^2)
+    function(t) list(
+      dx = -a/c*sin(t/c),
+      dy = a/c*cos(t/c),
+      dz = b/c + 0*t
+    )
+  }
+  
+  
+  a <- 0.5
+  b <- 1
+  helix <- helixGen(a=a,b=b)
+  helixTangent <- helixTangentGen(a=a,b=b)
+  arcLen = seq(from=0, to=20, length.out = 50)
+  # arcLen = seq(from=0, to=20, by = 1)
+  arcLenDiff = seq.by(arcLen)
+  c(x,y,z) %<-% helix(arcLen)
+  c(dx,dy,dz) %<-% helixTangent(arcLen)
+  
+  
+  
+  lines3D (
+    x, y, z, 
+    col = "red", cex.axis = 0.8, cex.lab = 1.2,
+    # xlim = c(-2,2),ylim=c(-2,2),cex.lab=1, 
+    r = 5, # eyepoint dist from center
+    d = 3, # perspective greaten < 1 < prespective lessen
+    main = paste0("Helix with parameters ","a = ", a, ", b = ", b),
+    ticktype = "detailed", colkey = FALSE, bty = "b2")
+ 
+  
+  lines3D (
+    dx, dy, dz, 
+    col = "blue", cex.axis = 0.8, cex.lab = 1.2,
+    # xlim = c(-2,2),ylim=c(-2,2),cex.lab=1, 
+    r = 5, # eyepoint dist from center
+    d = 3, # perspective greaten < 1 < prespective lessen
+    main = paste0("Tangent to helix with parameters ","a = ", a, ", b = ", b),
+    ticktype = "detailed", colkey = FALSE, bty = "b2")
+  
+  
+  plot(arcLen, pointwiseNorm(dx,dy,dz), 
+       main = paste0("Norm of tangent to helix with parameters ","a = ", a, ", b = ", b), 
+       type = "l")
+  
+  
+  pointwiseNorm(dx,dy,dz)[3] %>% print
+  
+  # diff expect dt = 1
+  # if it is some thing other, result should be rescaled
+  # diff with differences = 2 it is probably newton-cotes formula of order 2, need check
+  pointwiseNorm(diff(x)/arcLenDiff,diff(y)/arcLenDiff,diff(z)/arcLenDiff)[2] %>% print
+})()
+
+```
+
+
+
+
+```{r}
+
+(function(){
+  
+  
+})()
+
+
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

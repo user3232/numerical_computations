@@ -1,0 +1,58 @@
+<math xmlns="http://www.w3.org/1998/Math/MathML" alttext="{\displaystyle A_{k}=\sum _{n=0}^{N-1}{a_{n}w_{N}^{-kn}},\ 0\leqslant k\leqslant N-1,}">
+  <semantics>
+    <mrow class="MJX-TeXAtom-ORD">
+      <mstyle displaystyle="true" scriptlevel="0">
+        <msub>
+          <mi>A</mi>
+          <mrow class="MJX-TeXAtom-ORD">
+            <mi>k</mi>
+          </mrow>
+        </msub>
+        <mo>=</mo>
+        <munderover>
+          <mo>∑<!-- ∑ --></mo>
+          <mrow class="MJX-TeXAtom-ORD">
+            <mi>n</mi>
+            <mo>=</mo>
+            <mn>0</mn>
+          </mrow>
+          <mrow class="MJX-TeXAtom-ORD">
+            <mi>N</mi>
+            <mo>−<!-- − --></mo>
+            <mn>1</mn>
+          </mrow>
+        </munderover>
+        <mrow class="MJX-TeXAtom-ORD">
+          <msub>
+            <mi>a</mi>
+            <mrow class="MJX-TeXAtom-ORD">
+              <mi>n</mi>
+            </mrow>
+          </msub>
+          <msubsup>
+            <mi>w</mi>
+            <mrow class="MJX-TeXAtom-ORD">
+              <mi>N</mi>
+            </mrow>
+            <mrow class="MJX-TeXAtom-ORD">
+              <mo>−<!-- − --></mo>
+              <mi>k</mi>
+              <mi>n</mi>
+            </mrow>
+          </msubsup>
+        </mrow>
+        <mo>,</mo>
+        <mtext> </mtext>
+        <mn>0</mn>
+        <mo>⩽<!-- ⩽ --></mo>
+        <mi>k</mi>
+        <mo>⩽<!-- ⩽ --></mo>
+        <mi>N</mi>
+        <mo>−<!-- − --></mo>
+        <mn>1</mn>
+        <mo>,</mo>
+      </mstyle>
+    </mrow>
+    <annotation encoding="application/x-tex">{\displaystyle A_{k}=\sum _{n=0}^{N-1}{a_{n}w_{N}^{-kn}},\ 0\leqslant k\leqslant N-1,}</annotation>
+  </semantics>
+</math>

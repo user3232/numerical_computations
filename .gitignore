@@ -1,0 +1,7 @@
+# ignore books folders
+**/books/
+# ignore notebooks generated views
+**.nb.html
+# ignore PWSZ
+PWSZ/
+

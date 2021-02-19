@@ -1,0 +1,94 @@
+<math xmlns="http://www.w3.org/1998/Math/MathML" alttext="{\displaystyle S(x)={\frac {a_{0}}{2}}+\sum _{n=1}^{\infty }\left(a_{n}\cos \left({\frac {2n\pi }{T}}x\right)+b_{n}\sin \left({\frac {2n\pi }{T}}x\right)\right)}">
+  <semantics>
+    <mrow class="MJX-TeXAtom-ORD">
+      <mstyle displaystyle="true" scriptlevel="0">
+        <mi>S</mi>
+        <mo stretchy="false">(</mo>
+        <mi>x</mi>
+        <mo stretchy="false">)</mo>
+        <mo>=</mo>
+        <mrow class="MJX-TeXAtom-ORD">
+          <mfrac>
+            <msub>
+              <mi>a</mi>
+              <mrow class="MJX-TeXAtom-ORD">
+                <mn>0</mn>
+              </mrow>
+            </msub>
+            <mn>2</mn>
+          </mfrac>
+        </mrow>
+        <mo>+</mo>
+        <munderover>
+          <mo>∑<!-- ∑ --></mo>
+          <mrow class="MJX-TeXAtom-ORD">
+            <mi>n</mi>
+            <mo>=</mo>
+            <mn>1</mn>
+          </mrow>
+          <mrow class="MJX-TeXAtom-ORD">
+            <mi mathvariant="normal">∞<!-- ∞ --></mi>
+          </mrow>
+        </munderover>
+        <mrow>
+          <mo>(</mo>
+          <mrow>
+            <msub>
+              <mi>a</mi>
+              <mrow class="MJX-TeXAtom-ORD">
+                <mi>n</mi>
+              </mrow>
+            </msub>
+            <mi>cos</mi>
+            <mo>⁡<!-- ⁡ --></mo>
+            <mrow>
+              <mo>(</mo>
+              <mrow>
+                <mrow class="MJX-TeXAtom-ORD">
+                  <mfrac>
+                    <mrow>
+                      <mn>2</mn>
+                      <mi>n</mi>
+                      <mi>π<!-- π --></mi>
+                    </mrow>
+                    <mi>T</mi>
+                  </mfrac>
+                </mrow>
+                <mi>x</mi>
+              </mrow>
+              <mo>)</mo>
+            </mrow>
+            <mo>+</mo>
+            <msub>
+              <mi>b</mi>
+              <mrow class="MJX-TeXAtom-ORD">
+                <mi>n</mi>
+              </mrow>
+            </msub>
+            <mi>sin</mi>
+            <mo>⁡<!-- ⁡ --></mo>
+            <mrow>
+              <mo>(</mo>
+              <mrow>
+                <mrow class="MJX-TeXAtom-ORD">
+                  <mfrac>
+                    <mrow>
+                      <mn>2</mn>
+                      <mi>n</mi>
+                      <mi>π<!-- π --></mi>
+                    </mrow>
+                    <mi>T</mi>
+                  </mfrac>
+                </mrow>
+                <mi>x</mi>
+              </mrow>
+              <mo>)</mo>
+            </mrow>
+          </mrow>
+          <mo>)</mo>
+        </mrow>
+      </mstyle>
+    </mrow>
+    <annotation encoding="application/x-tex">{\displaystyle S(x)={\frac {a_{0}}{2}}+\sum _{n=1}^{\infty }\left(a_{n}\cos \left({\frac {2n\pi }{T}}x\right)+b_{n}\sin \left({\frac {2n\pi }{T}}x\right)\right)}</annotation>
+  </semantics>
+</math>

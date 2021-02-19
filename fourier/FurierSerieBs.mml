@@ -1,0 +1,76 @@
+<math xmlns="http://www.w3.org/1998/Math/MathML" alttext="{\displaystyle b_{n}={\frac {2}{T}}\int \limits _{-{\frac {T}{2}}}^{\frac {T}{2}}f(x)\sin \left({\frac {2n\pi }{T}}x\right)dx,\quad n=1,2,3,\dots }">
+  <semantics>
+    <mrow class="MJX-TeXAtom-ORD">
+      <mstyle displaystyle="true" scriptlevel="0">
+        <msub>
+          <mi>b</mi>
+          <mrow class="MJX-TeXAtom-ORD">
+            <mi>n</mi>
+          </mrow>
+        </msub>
+        <mo>=</mo>
+        <mrow class="MJX-TeXAtom-ORD">
+          <mfrac>
+            <mn>2</mn>
+            <mi>T</mi>
+          </mfrac>
+        </mrow>
+        <munderover>
+          <mo>∫<!-- ∫ --></mo>
+          <mrow class="MJX-TeXAtom-ORD">
+            <mo>−<!-- − --></mo>
+            <mrow class="MJX-TeXAtom-ORD">
+              <mfrac>
+                <mi>T</mi>
+                <mn>2</mn>
+              </mfrac>
+            </mrow>
+          </mrow>
+          <mrow class="MJX-TeXAtom-ORD">
+            <mfrac>
+              <mi>T</mi>
+              <mn>2</mn>
+            </mfrac>
+          </mrow>
+        </munderover>
+        <mi>f</mi>
+        <mo stretchy="false">(</mo>
+        <mi>x</mi>
+        <mo stretchy="false">)</mo>
+        <mi>sin</mi>
+        <mo>⁡<!-- ⁡ --></mo>
+        <mrow>
+          <mo>(</mo>
+          <mrow>
+            <mrow class="MJX-TeXAtom-ORD">
+              <mfrac>
+                <mrow>
+                  <mn>2</mn>
+                  <mi>n</mi>
+                  <mi>π<!-- π --></mi>
+                </mrow>
+                <mi>T</mi>
+              </mfrac>
+            </mrow>
+            <mi>x</mi>
+          </mrow>
+          <mo>)</mo>
+        </mrow>
+        <mi>d</mi>
+        <mi>x</mi>
+        <mo>,</mo>
+        <mspace width="1em"/>
+        <mi>n</mi>
+        <mo>=</mo>
+        <mn>1</mn>
+        <mo>,</mo>
+        <mn>2</mn>
+        <mo>,</mo>
+        <mn>3</mn>
+        <mo>,</mo>
+        <mo>…<!-- … --></mo>
+      </mstyle>
+    </mrow>
+    <annotation encoding="application/x-tex">{\displaystyle b_{n}={\frac {2}{T}}\int \limits _{-{\frac {T}{2}}}^{\frac {T}{2}}f(x)\sin \left({\frac {2n\pi }{T}}x\right)dx,\quad n=1,2,3,\dots }</annotation>
+  </semantics>
+</math>
